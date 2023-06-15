@@ -1,0 +1,6 @@
+name: AppleMCUtil
+version: 1.0
+main: apple.mc.utilities.ApplePluginUtil
+api-version: 1.19
+authors: [ appleptr16 ]
+softdepend: [ VoltPluginManager ]

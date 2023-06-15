@@ -1,0 +1,68 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+repositories {
+    maven { url "https://reposilite.appleptr16.com/appleptr16" }
+    maven { url 'https://papermc.io/repo/repository/maven-public/' }
+    maven { url 'https://repo.aikar.co/content/groups/aikar/' }
+    mavenCentral()
+    mavenLocal()
+    maven {
+        name 'CodeMC'
+        url 'https://repo.codemc.org/repository/maven-public/'
+    }
+}
+
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+project.group groupValue
+project.version versionValue
+publishing {
+    repositories {
+        maven {
+            name 'appleptr16Repo'
+            url 'https://reposilite.appleptr16.com/appleptr16'
+            credentials(PasswordCredentials)
+        }
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            setGroup groupValue
+            setVersion versionValue
+            from components.java
+        }
+    }
+}
+configurations {
+    configureEach {
+        resolutionStrategy.cacheDynamicVersionsFor 1, 'seconds'
+        resolutionStrategy.cacheChangingModulesFor 1, 'seconds'
+    }
+}
+
+dependencies {
+    compileOnly 'mc.pmc:voltpluginmanager:3.2-SNAPSHOT'
+
+    compileOnly 'org.spigotmc:spigot:1.19.4-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT'
+
+    compileOnly 'de.tr7zw:item-nbt-api-plugin:2.11.2'
+}
+jar {
+    doLast {
+        copy {
+            from jar.getArchiveFile()
+            into file(serverBuildDir)
+        }
+    }
+}
+tasks.register('publishAndBuild') {
+    dependsOn(jar, publishAllPublicationsToAppleptr16RepoRepository)
+}
